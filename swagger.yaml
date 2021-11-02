@@ -1,0 +1,315 @@
+swagger: "2.0"
+info:
+  description: "This Microservice used to add the official information in the Employee Account"
+  version: "1.0.0"
+  title: "Employee Managemnt System"
+  contact:
+    email: "abdul.mueez@wanclouds.net"
+host: "ems.swagger.io"
+basePath: "/v1"
+schemes:
+  - "http"
+paths:
+  /admin/add:
+    post:
+      tags:
+        - "admin"
+      summary: "Add Official Information to the employee account"
+      operationId: "addEmployee"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/employeeOfficial"
+      responses:
+        201:
+          description: Created
+          schema:
+            type: string
+        400:
+          description: Bad Request
+        401:
+          description: Unotherized
+        500:
+          description: Server error
+  /admin/update/{user_id}:
+    patch:
+      tags:
+        - "admin"
+      summary: "Update Official Information to the employee account"
+      operationId: "updateEmployee"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "Employee user_id to update"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/updateEmployeeOfficial"
+      responses:
+        200:
+          description: Successfully Update
+          schema:
+            type: string
+        400:
+          description: Bad Request
+          schema:
+            type: string
+        401:
+          description: Unotherized
+          schema:
+            type: string
+        404:
+          description: Not Found
+          schema:
+            type: string
+        500:
+          description: Internal Server Error
+          schema:
+            type: string
+  /admin/delete/{user_id}:
+    delete:
+      tags:
+        - "admin"
+      summary: "Update Official Information to the employee account"
+      operationId: "deleteEmployee"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "Employee user_id to delete"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/deleteEmployeeOfficial"
+      responses:
+        200:
+          description: Successfully Deleted
+          schema:
+            type: string
+        400:
+          description: Bad Request
+          schema:
+            type: string
+        401:
+          description: Unotherized
+          schema:
+            type: string
+        404:
+          description: Not Found
+          schema:
+            type: string
+        500:
+          description: Internal Server Error
+          schema:
+            type: string
+  /admin/show/{user_id}:
+    get:
+      tags:
+        - "admin"
+      summary: "Show Employee recoard"
+      operationId: "showEmployee"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "Enter user_id to Show the Recoard"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: Found
+          schema:
+            $ref: '#/definitions/employeeOfficial'
+        400:
+          description: Bad Request
+          schema:
+            type: string
+        401:
+          description: Unotherized
+          schema:
+            type: string
+        404:
+          description: Not Found
+          schema:
+            type: string
+        500:
+          description: Internal Server Error
+          schema:
+            type: string
+  /employee/show/{user_id}:
+    get:
+      tags:
+        - "employee"
+      summary: "show Employee Recoard Self"
+      operationId: "showEmployeeSelf"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "Enter user_id to Show the Recoard"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: Found
+          schema:
+            $ref: '#/definitions/employeeOfficial'
+        400:
+          description: Bad Request
+          schema:
+            type: string
+        401:
+          description: Unotherized
+          schema:
+            type: string
+        404:
+          description: Not Found
+          schema:
+            type: string
+        500:
+          description: Internal Server Error
+          schema:
+            type: string
+  /teamLead/showteam/{user_id}:
+    get:
+      tags:
+        - "teamLead"
+      summary: "Show Employee recoard"
+      operationId: "showEmployeeTeam"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "Enter user_id to Show the Recoard of Team Member"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: Found
+          schema:
+            $ref: '#/definitions/teamLeadEmployee'
+        400:
+          description: Bad Request
+          schema:
+            type: string
+        401:
+          description: Unotherized
+          schema:
+            type: string
+        404:
+          description: Not Found
+          schema:
+            type: string
+        500:
+          description: Internal Server Error
+          schema:
+            type: string
+definitions:
+  employeeOfficial:
+    type: "object"
+    required:
+      - "user_id"
+      - "salary"
+      - "designation"
+      - "department"
+      - "team_lead"
+      - "job_type"
+      - "health_insurance"
+      - "life_insurance"
+    properties:
+      user_id:
+        type: "string"
+        example: "31202"
+      salary:
+        type: integer
+        example: 20000
+      designation:
+        type: "string"
+        example: "BackEnd Developer"
+      department:
+        type: "string"
+        example: "GoLang"
+      team_lead:
+        type: "string"
+        example: "Kashif Ali"
+      job_type:
+        type: "string"
+        example: "Intern"
+      health_insurance:
+        type: boolean
+        example: true
+      life_insurance:
+        type: boolean
+        example: true
+  updateEmployeeOfficial:
+    type: "object"
+    required:
+      - "salary"
+      - "designation"
+      - "department"
+      - "team_lead"
+      - "job_type"
+      - "health_insurance"
+      - "life_insurance"
+    properties:
+      salary:
+        type: integer
+        example: 20000
+      designation:
+        type: "string"
+        example: "BackEnd Developer"
+      department:
+        type: "string"
+        example: "GoLang"
+      team_lead:
+        type: "string"
+        example: "Kashif Ali"
+      job_type:
+        type: "string"
+        example: "Intern"
+      health_insurance:
+        type: boolean
+        example: true
+      life_insurance:
+        type: boolean
+        example: true
+  deleteEmployeeOfficial:
+    type: "object"
+    required:
+      - "job_type"
+    properties:
+      job_type:
+        type: "string"
+        example: "Resign,Terminate"
+  teamLeadEmployee:
+    type: "object"
+    required:
+      - "designation"
+      - "department"
+      - "job_type"
+    properties:
+      designation:
+        type: "string"
+        example: "Backend Developer"
+      department:
+        type: "string"
+        example: "Golang"
+      job_type:
+        type: "string"
+        example: "Interum"
