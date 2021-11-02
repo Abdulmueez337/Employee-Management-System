@@ -87,23 +87,81 @@ func ShowDetailsTeamLead(userId string) (models.Employee, int, error) {
 }
 
 //UpdateDetails call update details db function
-func UpdateDetails(userId string, employee *models.Employee) (int, error) {
+func UpdateDetails(userId string, swaggerEmployee *models.Employee) (int, error) {
 	//Need to add authorization function for response 401
 	designation, err := db.CheckEmployee(userId)
+	var newEmployee models.Employee
 	if err != nil {
 		fmt.Errorf("failed to convert string to int, error : %v", err)
 		return 500, err
 	}
 	if designation != "" {
-		healthInsurance, err := strconv.Atoi(strconv.FormatBool(employee.HealthInsurance))
+		dbEmployee, err := db.DataUpdateEmployee(userId)
+		if err != nil {
+			fmt.Errorf("failed to convert string to int, error : %v", err)
+			return 500, err
+		} else {
+			//Check and Update Department
+			if dbEmployee.Department != swaggerEmployee.Department {
+				if swaggerEmployee.Department != "" {
+					dbEmployee.Department = swaggerEmployee.Department
+				}
+			}
+			newEmployee.Department = dbEmployee.Department
+
+			//Check and Update Designation
+			if dbEmployee.Designation != swaggerEmployee.Designation {
+				if swaggerEmployee.Designation != "" {
+					dbEmployee.Designation = swaggerEmployee.Designation
+				}
+			}
+			newEmployee.Designation = dbEmployee.Designation
+
+			//Check and Update JobType
+			if dbEmployee.JobType != swaggerEmployee.JobType {
+				if swaggerEmployee.JobType != "" {
+					dbEmployee.JobType = swaggerEmployee.JobType
+				}
+			}
+			newEmployee.JobType = dbEmployee.JobType
+
+			//Check and Update TeamLead
+			if dbEmployee.TeamLead != swaggerEmployee.TeamLead {
+				if swaggerEmployee.TeamLead != "" {
+					dbEmployee.TeamLead = swaggerEmployee.TeamLead
+				}
+			}
+			newEmployee.TeamLead = dbEmployee.TeamLead
+
+			//Check and Update Salary
+			if dbEmployee.Salary != swaggerEmployee.Salary {
+				if swaggerEmployee.Salary > dbEmployee.Salary {
+					dbEmployee.Salary = swaggerEmployee.Salary
+				}
+			}
+			newEmployee.Salary = dbEmployee.Salary
+
+			//Check and Update HealthInsurance
+			if dbEmployee.HealthInsurance != swaggerEmployee.HealthInsurance {
+				dbEmployee.HealthInsurance = swaggerEmployee.HealthInsurance
+			}
+			newEmployee.HealthInsurance = dbEmployee.HealthInsurance
+
+			//Check and Update LifeInsurance
+			if dbEmployee.LifeInsurance != swaggerEmployee.LifeInsurance {
+				dbEmployee.LifeInsurance = swaggerEmployee.LifeInsurance
+			}
+			newEmployee.LifeInsurance = dbEmployee.LifeInsurance
+		}
+		healthInsurance, err := strconv.Atoi(strconv.FormatBool(newEmployee.HealthInsurance))
 		if err != nil {
 			fmt.Errorf("failed to convert string to int, error : %v", err)
 		}
-		lifeInsurance, _ := strconv.Atoi(strconv.FormatBool(employee.HealthInsurance))
+		lifeInsurance, _ := strconv.Atoi(strconv.FormatBool(newEmployee.HealthInsurance))
 		if err != nil {
 			fmt.Errorf("failed to convert string to int, error : %v", err)
 		}
-		return db.UpdateEmployeeDetails(healthInsurance, lifeInsurance, userId, employee)
+		return db.UpdateEmployeeDetails(healthInsurance, lifeInsurance, userId, newEmployee)
 	} else {
 		return 404, nil
 	}
