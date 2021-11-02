@@ -51,7 +51,6 @@ paths:
           type: "string"
         - in: "body"
           name: "body"
-          required: true
           schema:
             $ref: "#/definitions/updateEmployeeOfficial"
       responses:

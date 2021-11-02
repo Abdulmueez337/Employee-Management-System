@@ -7,7 +7,6 @@ package admin
 
 import (
 	"context"
-	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -37,7 +36,6 @@ type UpdateEmployeeParams struct {
 	HTTPRequest *http.Request `json:"-"`
 
 	/*
-	  Required: true
 	  In: body
 	*/
 	Body *models.UpdateEmployeeOfficial
@@ -61,11 +59,7 @@ func (o *UpdateEmployeeParams) BindRequest(r *http.Request, route *middleware.Ma
 		defer r.Body.Close()
 		var body models.UpdateEmployeeOfficial
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
-			if err == io.EOF {
-				res = append(res, errors.Required("body", "body", ""))
-			} else {
-				res = append(res, errors.NewParseError("body", "body", "", err))
-			}
+			res = append(res, errors.NewParseError("body", "body", "", err))
 		} else {
 			// validate body object
 			if err := body.Validate(route.Formats); err != nil {
@@ -81,8 +75,6 @@ func (o *UpdateEmployeeParams) BindRequest(r *http.Request, route *middleware.Ma
 				o.Body = &body
 			}
 		}
-	} else {
-		res = append(res, errors.Required("body", "body", ""))
 	}
 
 	rUserID, rhkUserID, _ := route.Params.GetOK("user_id")

@@ -207,7 +207,6 @@ func init() {
           {
             "name": "body",
             "in": "body",
-            "required": true,
             "schema": {
               "$ref": "#/definitions/updateEmployeeOfficial"
             }
@@ -670,7 +669,6 @@ func init() {
           {
             "name": "body",
             "in": "body",
-            "required": true,
             "schema": {
               "$ref": "#/definitions/updateEmployeeOfficial"
             }
