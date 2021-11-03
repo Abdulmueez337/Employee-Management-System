@@ -1,7 +1,6 @@
 package client
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"net"
@@ -13,10 +12,6 @@ import (
 // RollBaseClient - http client for alert service
 type RollBaseClient struct {
 	Client *http.Client
-}
-type roleClientBody struct {
-	designation string
-	apiName     string
 }
 
 // NewRollBaseClient - initializes new client
@@ -31,36 +26,45 @@ func NewRollBaseClient() *RollBaseClient {
 }
 
 // GetRole - gets role from the roll base service
-func (r *RollBaseClient) GetRole(designation, role string) error {
-	roleBaseUrl := "http://192.168.0.232:3000/v1/role"
-	// roleBaseUrl is the url at which you want to hit the API
-	sender :=roleClientBody{designation: "Admin",apiName: "Add"}
-	req, err := http.NewRequestWithContext(context.TODO(), http.MethodPost, roleBaseUrl, bytes.NewBufferString(""))
+func (r *RollBaseClient) GetRole(designation, role string) int {
+	fmt.Println("Welcome to role check")
+	roleBaseUrl := "http://192.168.100.165:3000/v1/role"
+	req, err := http.NewRequestWithContext(context.TODO(), http.MethodGet, roleBaseUrl, nil)
 	if err != nil {
 		fmt.Errorf("error: %v", err)
-		return err
+		return 500
 	}
 	req.Header.Set("Content-Type", "application/json")
+	roleBaseUrl = roleBaseUrl + "/" + designation + "/" + role
+	fmt.Println("querry",roleBaseUrl)
 	requestURL, err := url.Parse(roleBaseUrl)
 	if err != nil {
 		fmt.Errorf("error: %v", err)
-		return err
+		return 500
 	}
 	resp, err := r.Client.Do(&http.Request{
 		Method: http.MethodGet,
 		URL:    requestURL,
 	})
-	fmt.Println("Received Response", resp)
 	if err != nil {
 		fmt.Errorf("error: %v", err)
-		return err
+		return 500
 	}
 	// use resp to get your desired data
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		fmt.Errorf("failed to get expected response from role base service, got status code: %d", resp.StatusCode)
-		return nil
+
+	if resp.StatusCode == http.StatusOK {
+		fmt.Println("User is Authorized")
+		return 200
+	} else if resp.StatusCode == http.StatusBadRequest {
+		fmt.Println("User is Not Authorized")
+		return 400
+	} else if resp.StatusCode == http.StatusForbidden {
+		fmt.Println("RoleCheck > Bad Request")
+		return 403
+	} else {
+		fmt.Println("RoleCheck > INTERNAL SERVER ERROR")
+		return 500
 	}
-	fmt.Println("Role successfully got from role base service")
-	return nil
+	return 500
 }

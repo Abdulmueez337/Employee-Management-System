@@ -12,16 +12,16 @@ import (
 )
 
 // ShowEmployeeHandlerFunc turns a function with the right signature into a show employee handler
-type ShowEmployeeHandlerFunc func(ShowEmployeeParams) middleware.Responder
+type ShowEmployeeHandlerFunc func(ShowEmployeeParams, interface{}) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ShowEmployeeHandlerFunc) Handle(params ShowEmployeeParams) middleware.Responder {
-	return fn(params)
+func (fn ShowEmployeeHandlerFunc) Handle(params ShowEmployeeParams, principal interface{}) middleware.Responder {
+	return fn(params, principal)
 }
 
 // ShowEmployeeHandler interface for that can handle valid show employee params
 type ShowEmployeeHandler interface {
-	Handle(ShowEmployeeParams) middleware.Responder
+	Handle(ShowEmployeeParams, interface{}) middleware.Responder
 }
 
 // NewShowEmployee creates a new http.Handler for the show employee operation
@@ -45,12 +45,25 @@ func (o *ShowEmployee) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		*r = *rCtx
 	}
 	var Params = NewShowEmployeeParams()
+	uprinc, aCtx, err := o.Context.Authorize(r, route)
+	if err != nil {
+		o.Context.Respond(rw, r, route.Produces, route, err)
+		return
+	}
+	if aCtx != nil {
+		*r = *aCtx
+	}
+	var principal interface{}
+	if uprinc != nil {
+		principal = uprinc.(interface{}) // this is really a interface{}, I promise
+	}
+
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	res := o.Handler.Handle(Params, principal) // actually handle the request
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

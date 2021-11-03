@@ -15,9 +15,10 @@ func ShowEmployeeSelf() employee.ShowEmployeeSelfHandler {
 }
 
 //Handle call show details to employee  service function
-func (e *showEmployeeSelf) Handle(params employee.ShowEmployeeSelfParams) middleware.Responder {
+func (e *showEmployeeSelf) Handle(params employee.ShowEmployeeSelfParams, i interface{}) middleware.Responder {
+	tokenAuth := params.HTTPRequest.Header.Get("Authorization")
 	//Call service layer
-	result, status, err := service.ShowDetailsEmployeeSelf(params.UserID)
+	result, status, err := service.ShowDetailsEmployeeSelf(params.UserID,tokenAuth)
 	if err != nil {
 		fmt.Errorf("INTERNAL SERVER ERROR: %s", err)
 		return employee.NewShowEmployeeSelfInternalServerError().WithPayload("Internal Server Error")
@@ -25,7 +26,9 @@ func (e *showEmployeeSelf) Handle(params employee.ShowEmployeeSelfParams) middle
 		return employee.NewShowEmployeeSelfUnauthorized().WithPayload("Not Authorized")
 	} else if status == 404 {
 		return employee.NewShowEmployeeSelfNotFound().WithPayload("Employee Not Found")
-	} else {
+	} else if status == 200 {
 		return employee.NewShowEmployeeSelfOK().WithPayload(toEmployeeGen(result))
+	} else {
+		return employee.NewShowEmployeeSelfInternalServerError()
 	}
 }

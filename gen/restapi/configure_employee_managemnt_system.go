@@ -40,33 +40,46 @@ func configureAPI(api *operations.EmployeeManagemntSystemAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	// Applies when the "Authorization" header is set
+	if api.BearerAuth == nil {
+		api.BearerAuth = func(token string) (interface{}, error) {
+			return nil, errors.NotImplemented("api key auth (Bearer) Authorization from header param [Authorization] has not yet been implemented")
+		}
+	}
+
+	// Set your custom authorizer if needed. Default one is security.Authorized()
+	// Expected interface runtime.Authorizer
+	//
+	// Example:
+	// api.APIAuthorizer = security.Authorized()
+
 	if api.AdminAddEmployeeHandler == nil {
-		api.AdminAddEmployeeHandler = admin.AddEmployeeHandlerFunc(func(params admin.AddEmployeeParams) middleware.Responder {
+		api.AdminAddEmployeeHandler = admin.AddEmployeeHandlerFunc(func(params admin.AddEmployeeParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation admin.AddEmployee has not yet been implemented")
 		})
 	}
 	if api.AdminDeleteEmployeeHandler == nil {
-		api.AdminDeleteEmployeeHandler = admin.DeleteEmployeeHandlerFunc(func(params admin.DeleteEmployeeParams) middleware.Responder {
+		api.AdminDeleteEmployeeHandler = admin.DeleteEmployeeHandlerFunc(func(params admin.DeleteEmployeeParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation admin.DeleteEmployee has not yet been implemented")
 		})
 	}
 	if api.AdminShowEmployeeHandler == nil {
-		api.AdminShowEmployeeHandler = admin.ShowEmployeeHandlerFunc(func(params admin.ShowEmployeeParams) middleware.Responder {
+		api.AdminShowEmployeeHandler = admin.ShowEmployeeHandlerFunc(func(params admin.ShowEmployeeParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation admin.ShowEmployee has not yet been implemented")
 		})
 	}
 	if api.EmployeeShowEmployeeSelfHandler == nil {
-		api.EmployeeShowEmployeeSelfHandler = employee.ShowEmployeeSelfHandlerFunc(func(params employee.ShowEmployeeSelfParams) middleware.Responder {
+		api.EmployeeShowEmployeeSelfHandler = employee.ShowEmployeeSelfHandlerFunc(func(params employee.ShowEmployeeSelfParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation employee.ShowEmployeeSelf has not yet been implemented")
 		})
 	}
 	if api.TeamLeadShowEmployeeTeamHandler == nil {
-		api.TeamLeadShowEmployeeTeamHandler = team_lead.ShowEmployeeTeamHandlerFunc(func(params team_lead.ShowEmployeeTeamParams) middleware.Responder {
+		api.TeamLeadShowEmployeeTeamHandler = team_lead.ShowEmployeeTeamHandlerFunc(func(params team_lead.ShowEmployeeTeamParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation team_lead.ShowEmployeeTeam has not yet been implemented")
 		})
 	}
 	if api.AdminUpdateEmployeeHandler == nil {
-		api.AdminUpdateEmployeeHandler = admin.UpdateEmployeeHandlerFunc(func(params admin.UpdateEmployeeParams) middleware.Responder {
+		api.AdminUpdateEmployeeHandler = admin.UpdateEmployeeHandlerFunc(func(params admin.UpdateEmployeeParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation admin.UpdateEmployee has not yet been implemented")
 		})
 	}

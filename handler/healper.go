@@ -7,7 +7,7 @@ import (
 )
 
 // toEmployeeDomain converts gen to domain model
-func toEmployeeDomain(employee *models.EmployeeOfficial) *domain.Employee{
+func toEmployeeDomain(employee *models.EmployeeOfficial) *domain.Employee {
 	return &domain.Employee{
 		UserId:          swag.StringValue(employee.UserID),
 		Salary:          int(swag.Int64Value(employee.Salary)),

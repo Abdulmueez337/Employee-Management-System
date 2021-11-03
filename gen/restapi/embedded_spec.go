@@ -18,6 +18,12 @@ var (
 
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "schemes": [
     "http"
   ],
@@ -26,15 +32,20 @@ func init() {
     "description": "This Microservice used to add the official information in the Employee Account",
     "title": "Employee Managemnt System",
     "contact": {
-      "email": "abdul.mueez@wanclouds.net"
+      "email": "abdulmueez@wanclouds.net"
     },
     "version": "1.0.0"
   },
-  "host": "ems.swagger.io",
+  "host": "localhost:3050",
   "basePath": "/v1",
   "paths": {
     "/admin/add": {
       "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -74,6 +85,11 @@ func init() {
     },
     "/admin/delete/{user_id}": {
       "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -135,6 +151,11 @@ func init() {
     },
     "/admin/show/{user_id}": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -188,6 +209,11 @@ func init() {
     },
     "/admin/update/{user_id}": {
       "patch": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -248,6 +274,11 @@ func init() {
     },
     "/employee/show/{user_id}": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -301,6 +332,11 @@ func init() {
     },
     "/teamLead/showteam/{user_id}": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -476,10 +512,23 @@ func init() {
           "example": "Kashif Ali"
         }
       }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   }
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "schemes": [
     "http"
   ],
@@ -488,15 +537,20 @@ func init() {
     "description": "This Microservice used to add the official information in the Employee Account",
     "title": "Employee Managemnt System",
     "contact": {
-      "email": "abdul.mueez@wanclouds.net"
+      "email": "abdulmueez@wanclouds.net"
     },
     "version": "1.0.0"
   },
-  "host": "ems.swagger.io",
+  "host": "localhost:3050",
   "basePath": "/v1",
   "paths": {
     "/admin/add": {
       "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -536,6 +590,11 @@ func init() {
     },
     "/admin/delete/{user_id}": {
       "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -597,6 +656,11 @@ func init() {
     },
     "/admin/show/{user_id}": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -650,6 +714,11 @@ func init() {
     },
     "/admin/update/{user_id}": {
       "patch": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -710,6 +779,11 @@ func init() {
     },
     "/employee/show/{user_id}": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -763,6 +837,11 @@ func init() {
     },
     "/teamLead/showteam/{user_id}": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -938,6 +1017,13 @@ func init() {
           "example": "Kashif Ali"
         }
       }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   }
 }`))

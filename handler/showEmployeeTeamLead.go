@@ -15,9 +15,10 @@ func ShowEmployeeTeamLead() team_lead.ShowEmployeeTeamHandler {
 }
 
 //Handle call show team members details to team lead service function
-func (e *showEmployeeTeamLead) Handle(params team_lead.ShowEmployeeTeamParams) middleware.Responder {
+func (e *showEmployeeTeamLead) Handle(params team_lead.ShowEmployeeTeamParams, i interface{}) middleware.Responder {
+	tokenAuth := params.HTTPRequest.Header.Get("Authorization")
 	//Call service layer
-	result, status, err := service.ShowDetailsTeamLead(params.UserID)
+	result, status, err := service.ShowDetailsTeamLead(params.UserID,tokenAuth)
 	if err != nil {
 		fmt.Errorf("INTERNAL SERVER ERROR: %s", err)
 		return team_lead.NewShowEmployeeTeamInternalServerError().WithPayload("Internal Server Error")
@@ -25,7 +26,9 @@ func (e *showEmployeeTeamLead) Handle(params team_lead.ShowEmployeeTeamParams) m
 		return team_lead.NewShowEmployeeTeamUnauthorized().WithPayload("Not Authorized")
 	} else if status == 404 {
 		return team_lead.NewShowEmployeeTeamNotFound().WithPayload("Not Found")
-	} else {
+	} else if status == 200 {
 		return team_lead.NewShowEmployeeTeamOK().WithPayload(toTeamLeadEmployeeGen(result))
+	} else {
+		return team_lead.NewShowEmployeeTeamInternalServerError()
 	}
 }

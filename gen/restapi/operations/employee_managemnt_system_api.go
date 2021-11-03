@@ -46,24 +46,31 @@ func NewEmployeeManagemntSystemAPI(spec *loads.Document) *EmployeeManagemntSyste
 
 		JSONProducer: runtime.JSONProducer(),
 
-		AdminAddEmployeeHandler: admin.AddEmployeeHandlerFunc(func(params admin.AddEmployeeParams) middleware.Responder {
+		AdminAddEmployeeHandler: admin.AddEmployeeHandlerFunc(func(params admin.AddEmployeeParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation admin.AddEmployee has not yet been implemented")
 		}),
-		AdminDeleteEmployeeHandler: admin.DeleteEmployeeHandlerFunc(func(params admin.DeleteEmployeeParams) middleware.Responder {
+		AdminDeleteEmployeeHandler: admin.DeleteEmployeeHandlerFunc(func(params admin.DeleteEmployeeParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation admin.DeleteEmployee has not yet been implemented")
 		}),
-		AdminShowEmployeeHandler: admin.ShowEmployeeHandlerFunc(func(params admin.ShowEmployeeParams) middleware.Responder {
+		AdminShowEmployeeHandler: admin.ShowEmployeeHandlerFunc(func(params admin.ShowEmployeeParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation admin.ShowEmployee has not yet been implemented")
 		}),
-		EmployeeShowEmployeeSelfHandler: employee.ShowEmployeeSelfHandlerFunc(func(params employee.ShowEmployeeSelfParams) middleware.Responder {
+		EmployeeShowEmployeeSelfHandler: employee.ShowEmployeeSelfHandlerFunc(func(params employee.ShowEmployeeSelfParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation employee.ShowEmployeeSelf has not yet been implemented")
 		}),
-		TeamLeadShowEmployeeTeamHandler: team_lead.ShowEmployeeTeamHandlerFunc(func(params team_lead.ShowEmployeeTeamParams) middleware.Responder {
+		TeamLeadShowEmployeeTeamHandler: team_lead.ShowEmployeeTeamHandlerFunc(func(params team_lead.ShowEmployeeTeamParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation team_lead.ShowEmployeeTeam has not yet been implemented")
 		}),
-		AdminUpdateEmployeeHandler: admin.UpdateEmployeeHandlerFunc(func(params admin.UpdateEmployeeParams) middleware.Responder {
+		AdminUpdateEmployeeHandler: admin.UpdateEmployeeHandlerFunc(func(params admin.UpdateEmployeeParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation admin.UpdateEmployee has not yet been implemented")
 		}),
+
+		// Applies when the "Authorization" header is set
+		BearerAuth: func(token string) (interface{}, error) {
+			return nil, errors.NotImplemented("api key auth (Bearer) Authorization from header param [Authorization] has not yet been implemented")
+		},
+		// default authorizer is authorized meaning no requests are blocked
+		APIAuthorizer: security.Authorized(),
 	}
 }
 
@@ -99,6 +106,13 @@ type EmployeeManagemntSystemAPI struct {
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
+
+	// BearerAuth registers a function that takes a token and returns a principal
+	// it performs authentication based on an api key Authorization provided in the header
+	BearerAuth func(string) (interface{}, error)
+
+	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
+	APIAuthorizer runtime.Authorizer
 
 	// AdminAddEmployeeHandler sets the operation handler for the add employee operation
 	AdminAddEmployeeHandler admin.AddEmployeeHandler
@@ -189,6 +203,10 @@ func (o *EmployeeManagemntSystemAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.BearerAuth == nil {
+		unregistered = append(unregistered, "AuthorizationAuth")
+	}
+
 	if o.AdminAddEmployeeHandler == nil {
 		unregistered = append(unregistered, "admin.AddEmployeeHandler")
 	}
@@ -222,12 +240,21 @@ func (o *EmployeeManagemntSystemAPI) ServeErrorFor(operationID string) func(http
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *EmployeeManagemntSystemAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
-	return nil
+	result := make(map[string]runtime.Authenticator)
+	for name := range schemes {
+		switch name {
+		case "Bearer":
+			scheme := schemes[name]
+			result[name] = o.APIKeyAuthenticator(scheme.Name, scheme.In, o.BearerAuth)
+
+		}
+	}
+	return result
 }
 
 // Authorizer returns the registered authorizer
 func (o *EmployeeManagemntSystemAPI) Authorizer() runtime.Authorizer {
-	return nil
+	return o.APIAuthorizer
 }
 
 // ConsumersFor gets the consumers for the specified media types.

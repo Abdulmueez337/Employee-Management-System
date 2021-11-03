@@ -5,10 +5,10 @@
 //  This Microservice used to add the official information in the Employee Account
 //  Schemes:
 //    http
-//  Host: ems.swagger.io
+//  Host: localhost:3050
 //  BasePath: /v1
 //  Version: 1.0.0
-//  Contact: <abdul.mueez@wanclouds.net>
+//  Contact: <abdulmueez@wanclouds.net>
 //
 //  Consumes:
 //    - application/json

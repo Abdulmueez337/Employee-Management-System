@@ -7,6 +7,9 @@ github.com/PuerkitoBio/urlesc
 # github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 ## explicit; go 1.13
 github.com/asaskevich/govalidator
+# github.com/dgrijalva/jwt-go v3.2.0+incompatible
+## explicit
+github.com/dgrijalva/jwt-go
 # github.com/docker/go-units v0.4.0
 ## explicit
 github.com/docker/go-units
@@ -89,7 +92,7 @@ go.mongodb.org/mongo-driver/x/bsonx/bsoncore
 ## explicit; go 1.17
 golang.org/x/net/idna
 golang.org/x/net/netutil
-# golang.org/x/sys v0.0.0-20211102061401-a2f17f7b995c
+# golang.org/x/sys v0.0.0-20211102192858-4dd72447c267
 ## explicit; go 1.17
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix

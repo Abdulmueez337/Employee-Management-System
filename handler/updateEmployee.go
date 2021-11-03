@@ -15,9 +15,10 @@ func UpdateEmployee() admin.UpdateEmployeeHandler {
 }
 
 //Handle call update details service layer function
-func (e *updateEmployee) Handle(params admin.UpdateEmployeeParams) middleware.Responder {
+func (e *updateEmployee) Handle(params admin.UpdateEmployeeParams, i interface{}) middleware.Responder {
+	tokenAuth := params.HTTPRequest.Header.Get("Authorization")
 	//Call service layer
-	result, err := service.UpdateDetails(params.UserID, toUpdateEmployeeDomain(params.Body))
+	result, err := service.UpdateDetails(params.UserID, toUpdateEmployeeDomain(params.Body),tokenAuth)
 	if err != nil {
 		fmt.Errorf("INTERNAL SERVER ERROR: %s", err)
 		return admin.NewUpdateEmployeeInternalServerError().WithPayload("Internal Server Error")
@@ -25,7 +26,9 @@ func (e *updateEmployee) Handle(params admin.UpdateEmployeeParams) middleware.Re
 		return admin.NewUpdateEmployeeUnauthorized().WithPayload("Not Authorized")
 	} else if result == 404 {
 		return admin.NewUpdateEmployeeNotFound().WithPayload("Employee Not Found")
-	} else {
+	} else if result == 200 {
 		return admin.NewUpdateEmployeeOK().WithPayload("Successfully Update")
+	} else {
+		return admin.NewUpdateEmployeeInternalServerError()
 	}
 }
