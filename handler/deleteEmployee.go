@@ -19,17 +19,19 @@ func DeleteEmployee() admin.DeleteEmployeeHandler {
 func (e *deleteEmployee) Handle(params admin.DeleteEmployeeParams, i interface{}) middleware.Responder {
 	tokenAuth := params.HTTPRequest.Header.Get("Authorization")
 	//Call service layer
-	result, err := service.DeleteDetails(params.UserID, swag.StringValue(params.Body.JobType),tokenAuth)
+	result, err := service.DeleteDetails(params.UserID, swag.StringValue(params.Body.JobType), tokenAuth)
 	if err != nil {
 		fmt.Errorf("INTERNAL SERVER ERROR FOUND: %s", err)
 		return admin.NewDeleteEmployeeInternalServerError().WithPayload("Internal Server Error")
+	} else if result == 400 {
+		return admin.NewDeleteEmployeeBadRequest().WithPayload("Bad Request")
 	} else if result == 401 {
 		return admin.NewDeleteEmployeeUnauthorized().WithPayload("Not Authorized")
 	} else if result == 404 {
 		return admin.NewDeleteEmployeeNotFound().WithPayload("Employee Not Exist")
-	} else if result == 200{
+	} else if result == 200 {
 		return admin.NewDeleteEmployeeOK().WithPayload("Successfully Deleted")
-	}else {
+	} else {
 		return admin.NewAddEmployeeInternalServerError()
 	}
 }

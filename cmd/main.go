@@ -35,19 +35,21 @@ func main() {
 	api.TeamLeadShowEmployeeTeamHandler = handler.ShowEmployeeTeamLead()
 	//Verify token from the login api
 	api.BearerAuth = func(token string) (interface{}, error) {
-
 		authClient := client.NewTokenBaseClient()
-		authresponse := (*client.TokenBaseClient).GetValidate(authClient, token)
-		if authresponse == 200 {
+		authResponse := (*client.TokenBaseClient).GetValidate(authClient, token)
+		if authResponse == 200 {
 			fmt.Println("Token is valid")
 			return api, nil
-		} else if authresponse == 400 {
+		} else if authResponse == 400 {
 			fmt.Println("Invalid Token")
-			return api, nil
+			return nil, nil
 		} else {
 			fmt.Println("Token > INTERNAL SERVER ERROR")
-			return api, nil
+			return nil, nil
 		}
+		//For testing without user token func
+		//fmt.Println("Token is :",authResponse)
+		//return api,nil
 	}
 	if err := server.Serve(); err != nil {
 		log.Fatalln(err)

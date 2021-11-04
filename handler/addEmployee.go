@@ -18,7 +18,7 @@ func AddEmployee() admin.AddEmployeeHandler {
 func (e *addEmployee) Handle(params admin.AddEmployeeParams, i interface{}) middleware.Responder {
 	//Call service layer
 	tokenAuth := params.HTTPRequest.Header.Get("Authorization")
-	result, err := service.AddDetails(toEmployeeDomain(params.Body),tokenAuth)
+	result, err := service.AddDetails(toEmployeeDomain(params.Body), tokenAuth)
 	if err != nil {
 		fmt.Errorf("INTERNAL SERVER ERROR: %s", err)
 		return admin.NewAddEmployeeInternalServerError()
@@ -28,11 +28,11 @@ func (e *addEmployee) Handle(params admin.AddEmployeeParams, i interface{}) midd
 		return admin.NewShowEmployeeUnauthorized().WithPayload("Not Authorized")
 	} else if result == 404 {
 		return admin.NewShowEmployeeNotFound().WithPayload("Employee Not Found")
-	} else if result == 500{
+	} else if result == 500 {
 		return admin.NewAddEmployeeInternalServerError()
-	}else if result == 200 {
+	} else if result == 200 {
 		return admin.NewAddEmployeeCreated().WithPayload("Employee Successfully Added")
-	}else {
+	} else {
 		return admin.NewAddEmployeeInternalServerError()
 	}
 

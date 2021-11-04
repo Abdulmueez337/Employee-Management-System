@@ -26,7 +26,7 @@ func NewTokenBaseClient() *TokenBaseClient {
 
 // GetValidate - validate the token
 func (r *TokenBaseClient) GetValidate(token string) int {
-	authBaseUrl := "http://192.168.100.177:3002/validateToken"
+	authBaseUrl := "http://192.168.0.110:3002/validateToken"
 	req, err := http.NewRequestWithContext(context.TODO(), http.MethodGet, authBaseUrl, nil)
 	if err != nil {
 		fmt.Errorf("error: %v", err)

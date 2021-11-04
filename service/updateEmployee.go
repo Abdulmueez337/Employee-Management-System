@@ -9,13 +9,13 @@ import (
 )
 
 //UpdateDetails call update details db function
-func UpdateDetails(userId string, swaggerEmployee *models.Employee,tokenAuth string) (int, error) {
+func UpdateDetails(userId string, swaggerEmployee *models.Employee, tokenAuth string) (int, error) {
 	//Extract userId from token
-	newUserId,check := UserIdExtract(tokenAuth)
+	newUserId, check := UserIdExtract(tokenAuth)
 	if check == 500 {
-		return 500,nil
+		fmt.Println("UserID service Error:", check)
+		return 500, nil
 	}
-	fmt.Println("UserId of the login user is : ",newUserId)
 	designation, err := db.CheckEmployee(userId)
 	var newEmployee models.Employee
 	if err != nil {
@@ -23,9 +23,12 @@ func UpdateDetails(userId string, swaggerEmployee *models.Employee,tokenAuth str
 		return 500, err
 	}
 	if designation != "" {
+		newDesignation, _ := db.CheckEmployee(newUserId)
+		fmt.Println("Token User Designation is :", newDesignation)
+
 		//Check the user is authorized for this api
 		newClient := client.NewRollBaseClient()
-		authorizeResponse := (*client.RollBaseClient).GetRole(newClient, designation, "UpdateDetails")
+		authorizeResponse := (*client.RollBaseClient).GetRole(newClient, newDesignation, "UpdateDetails")
 		if authorizeResponse == 200 {
 			dbEmployee, err := db.DataUpdateEmployee(userId)
 			if err != nil {

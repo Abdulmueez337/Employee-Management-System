@@ -27,8 +27,7 @@ func NewRollBaseClient() *RollBaseClient {
 
 // GetRole - gets role from the roll base service
 func (r *RollBaseClient) GetRole(designation, role string) int {
-	fmt.Println("Welcome to role check")
-	roleBaseUrl := "http://192.168.100.165:3000/v1/role"
+	roleBaseUrl := "http://192.168.0.232:3000/v1/role"
 	req, err := http.NewRequestWithContext(context.TODO(), http.MethodGet, roleBaseUrl, nil)
 	if err != nil {
 		fmt.Errorf("error: %v", err)
@@ -36,7 +35,7 @@ func (r *RollBaseClient) GetRole(designation, role string) int {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	roleBaseUrl = roleBaseUrl + "/" + designation + "/" + role
-	fmt.Println("querry",roleBaseUrl)
+	fmt.Println("Check Role URL :", roleBaseUrl)
 	requestURL, err := url.Parse(roleBaseUrl)
 	if err != nil {
 		fmt.Errorf("error: %v", err)

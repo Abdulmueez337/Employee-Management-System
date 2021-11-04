@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func UserIdExtract(tokenAuth string)  (string,int){
+func UserIdExtract(tokenAuth string) (string, int) {
 	var MySignKey = []byte("123123123123")
 	claims := jwt.MapClaims{}
 	tokenString := strings.Split(tokenAuth, " ")[1]
@@ -16,6 +16,7 @@ func UserIdExtract(tokenAuth string)  (string,int){
 		return MySignKey, nil
 	})
 	if err != nil {
+		fmt.Println("Token Func Error")
 		fmt.Errorf("failed to convert string to int, error : %v", err)
 		return "", 500
 	}
@@ -23,5 +24,5 @@ func UserIdExtract(tokenAuth string)  (string,int){
 	convertedUserID := fmt.Sprintf("%f", claimUserId)
 	tokenUserId := strings.Split(convertedUserID, ".")[0]
 	fmt.Println("Token UserId", tokenUserId)
-	return tokenUserId,200
+	return tokenUserId, 200
 }

@@ -11,28 +11,29 @@ import (
 //AddDetails call add details db function
 func AddDetails(employee *models.Employee, tokenAuth string) (int, error) {
 	//Extract userId from token
-	newUserId,check := UserIdExtract(tokenAuth)
+	newUserId, check := UserIdExtract(tokenAuth)
 	if check == 500 {
-		return 500,nil
+		fmt.Println("UserID service Error:", check)
+		return 500, nil
 	}
-	fmt.Println("UserId of the login user is : ",newUserId)
 	//Check user is existed
 	designation, err := db.CheckEmployee(employee.UserId)
 	if err != nil {
+		fmt.Println("designation error")
 		fmt.Errorf("failed to convert string to int, error : %v", err)
-		return 500, err
+		//return 500, err
 	}
 	if designation != "" {
-		fmt.Println("null")
+		fmt.Println("designation null")
 		return 400, nil
 	} else {
 		//jest for testing given this designation name
-		designation = "admin"
-		fmt.Println("hello")
+		newDesignation, _ := db.CheckEmployee(newUserId)
+		fmt.Println("Token User Designation is :", newDesignation)
 
 		//Check the user is authorized for this api
 		newClient := client.NewRollBaseClient()
-		authorizeResponse := (*client.RollBaseClient).GetRole(newClient, designation, "AddDetails")
+		authorizeResponse := (*client.RollBaseClient).GetRole(newClient, newDesignation, "AddDetails")
 		if authorizeResponse == 200 {
 			healthInsurance, err := strconv.Atoi(strconv.FormatBool(employee.HealthInsurance))
 			if err != nil {

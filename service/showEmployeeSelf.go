@@ -8,13 +8,13 @@ import (
 )
 
 //ShowDetailsEmployeeSelf call show team members details to team lead db function
-func ShowDetailsEmployeeSelf(userId,tokenAuth string) (models.Employee, int, error) {
+func ShowDetailsEmployeeSelf(userId, tokenAuth string) (models.Employee, int, error) {
 	//Extract userId from token
-	newUserId,check := UserIdExtract(tokenAuth)
+	newUserId, check := UserIdExtract(tokenAuth)
 	if check == 500 {
-		return models.Employee{},500,nil
+		fmt.Println("UserID service Error:", check)
+		return models.Employee{}, 500, nil
 	}
-	fmt.Println("UserId of the login user is : ",newUserId)
 	//Check user is existed
 	designation, err := db.CheckEmployee(userId)
 	if err != nil {
@@ -22,11 +22,17 @@ func ShowDetailsEmployeeSelf(userId,tokenAuth string) (models.Employee, int, err
 		return models.Employee{}, 500, err
 	}
 	if designation != "" {
+		newDesignation, _ := db.CheckEmployee(newUserId)
+		fmt.Println("Token User Designation is :", newDesignation)
 		//Check the user is authorized for this api
 		newClient := client.NewRollBaseClient()
-		authorizeResponse := (*client.RollBaseClient).GetRole(newClient, designation, "ShowDetailsEmployeeSelf")
+		authorizeResponse := (*client.RollBaseClient).GetRole(newClient, newDesignation, "ShowDetailsEmployeeSelf")
 		if authorizeResponse == 200 {
-			return db.ShowEmployeeDetails(userId)
+			if userId == newUserId {
+				return db.ShowEmployeeDetails(userId)
+			} else {
+				return models.Employee{}, 401, nil
+			}
 		} else if authorizeResponse == 400 {
 			return models.Employee{}, 400, nil
 		} else if authorizeResponse == 403 {

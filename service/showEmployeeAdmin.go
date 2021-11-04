@@ -8,13 +8,13 @@ import (
 )
 
 //ShowDetailsAdmin call show details to admin db function
-func ShowDetailsAdmin(userid,tokenAuth string) (models.Employee, int, error) {
+func ShowDetailsAdmin(userid, tokenAuth string) (models.Employee, int, error) {
 	//Extract userId from token
-	newUserId,check := UserIdExtract(tokenAuth)
+	newUserId, check := UserIdExtract(tokenAuth)
 	if check == 500 {
-		return models.Employee{},500,nil
+		fmt.Println("UserID service Error:", check)
+		return models.Employee{}, 500, nil
 	}
-	fmt.Println("UserId of the login user is : ",newUserId)
 	//Check user is existed
 	designation, err := db.CheckEmployee(userid)
 	if err != nil {
@@ -22,9 +22,11 @@ func ShowDetailsAdmin(userid,tokenAuth string) (models.Employee, int, error) {
 		return models.Employee{}, 500, err
 	}
 	if designation != "" {
+		newDesignation, _ := db.CheckEmployee(newUserId)
+		fmt.Println("Token User Designation is :", newDesignation)
 		//Check the user is authorized for this api
 		newClient := client.NewRollBaseClient()
-		authorizeResponse := (*client.RollBaseClient).GetRole(newClient, designation, "ShowDetailsAdmin")
+		authorizeResponse := (*client.RollBaseClient).GetRole(newClient, newDesignation, "ShowDetailsAdmin")
 		if authorizeResponse == 200 {
 			return db.ShowEmployeeDetails(userid)
 		} else if authorizeResponse == 400 {

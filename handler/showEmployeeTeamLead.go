@@ -18,10 +18,12 @@ func ShowEmployeeTeamLead() team_lead.ShowEmployeeTeamHandler {
 func (e *showEmployeeTeamLead) Handle(params team_lead.ShowEmployeeTeamParams, i interface{}) middleware.Responder {
 	tokenAuth := params.HTTPRequest.Header.Get("Authorization")
 	//Call service layer
-	result, status, err := service.ShowDetailsTeamLead(params.UserID,tokenAuth)
+	result, status, err := service.ShowDetailsTeamLead(params.UserID, tokenAuth)
 	if err != nil {
 		fmt.Errorf("INTERNAL SERVER ERROR: %s", err)
 		return team_lead.NewShowEmployeeTeamInternalServerError().WithPayload("Internal Server Error")
+	} else if status == 400 {
+		return team_lead.NewShowEmployeeTeamBadRequest().WithPayload("Bad Request")
 	} else if status == 401 {
 		return team_lead.NewShowEmployeeTeamUnauthorized().WithPayload("Not Authorized")
 	} else if status == 404 {

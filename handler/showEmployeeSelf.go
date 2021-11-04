@@ -18,10 +18,12 @@ func ShowEmployeeSelf() employee.ShowEmployeeSelfHandler {
 func (e *showEmployeeSelf) Handle(params employee.ShowEmployeeSelfParams, i interface{}) middleware.Responder {
 	tokenAuth := params.HTTPRequest.Header.Get("Authorization")
 	//Call service layer
-	result, status, err := service.ShowDetailsEmployeeSelf(params.UserID,tokenAuth)
+	result, status, err := service.ShowDetailsEmployeeSelf(params.UserID, tokenAuth)
 	if err != nil {
 		fmt.Errorf("INTERNAL SERVER ERROR: %s", err)
 		return employee.NewShowEmployeeSelfInternalServerError().WithPayload("Internal Server Error")
+	} else if status == 400 {
+		return employee.NewShowEmployeeSelfBadRequest().WithPayload("Bad Request")
 	} else if status == 401 {
 		return employee.NewShowEmployeeSelfUnauthorized().WithPayload("Not Authorized")
 	} else if status == 404 {
